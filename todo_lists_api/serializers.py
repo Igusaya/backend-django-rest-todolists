@@ -11,8 +11,8 @@ class CardSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'position', 'color', 'created', 'owner']
 
 class UserSerializer(serializers.ModelSerializer):
-    PourmeeAPI = serializers.PrimaryKeyRelatedField(many=True, queryset=Card.objects.all())
+    todo_lists_api = serializers.PrimaryKeyRelatedField(many=True, queryset=Card.objects.all())
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'PourmeeAPI']
+        fields = ['id', 'username', 'todo_lists_api']
