@@ -13,6 +13,8 @@ local_settings.py
 db.sqlite3
 media
 .DS_Store
+image/profIcon/*
+!defo.png
 
 # React----------------------------
 ## dependencies
