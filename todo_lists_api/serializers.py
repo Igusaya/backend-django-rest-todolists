@@ -1,4 +1,4 @@
-from todo_lists_api.models import Card
+from todo_lists_api.models import Card, Profile
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
@@ -15,4 +15,15 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'todo_lists_api']
+        fields = ['id', 'username', 'last_login', 'todo_lists_api']
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    username = serializers.ReadOnlyField(source='user.username')
+    email = serializers.ReadOnlyField(source='user.email')
+    last_login= serializers.ReadOnlyField(source='user.last_login')
+
+    class Meta:
+        model = Profile
+        fields = ['id', 'user_id', 'username', 'email', 'last_login', 'image', 'description', 'modify']
+

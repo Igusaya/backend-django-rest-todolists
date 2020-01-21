@@ -110,6 +110,9 @@ DATABASES = {
     }
 }
 
+# 画像アップロードのため追加
+MEDIA_ROOT = os.path.join(BASE_DIR, 'image')
+MEDIA_URL = '/image/'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -135,7 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tokyo'
 
 USE_I18N = True
 
