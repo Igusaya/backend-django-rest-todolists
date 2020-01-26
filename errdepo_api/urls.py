@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
-from todo_lists_api import views
+from errdepo_api import views
 from django.conf.urls import include
 
 urlpatterns = [
@@ -9,6 +9,7 @@ urlpatterns = [
         path('users/', views.UserList.as_view()),
         path('users/<int:pk>/', views.UserDetail.as_view()),
         path('profile/', views.ProfileDetail.as_view()),
+        path('lang/', views.Lang.as_view())
 ]
 
 urlpatterns += [

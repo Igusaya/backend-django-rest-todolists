@@ -25,7 +25,7 @@ from rest_framework.routers import DefaultRouter
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('todo_lists_api.urls')),
+    path('', include('errdepo_api.urls')),
     re_path('image/(?P<path>.*)', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
 

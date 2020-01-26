@@ -1,4 +1,4 @@
-from todo_lists_api.models import Card, Profile
+from errdepo_api.models import Card, Profile
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
@@ -11,11 +11,11 @@ class CardSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'position', 'color', 'created', 'owner']
 
 class UserSerializer(serializers.ModelSerializer):
-    todo_lists_api = serializers.PrimaryKeyRelatedField(many=True, queryset=Card.objects.all())
+    errdepo_api = serializers.PrimaryKeyRelatedField(many=True, queryset=Card.objects.all())
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'last_login', 'todo_lists_api']
+        fields = ['id', 'username', 'last_login', 'errdepo_api']
 
 class ProfileSerializer(serializers.ModelSerializer):
 
@@ -26,4 +26,3 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['id', 'user_id', 'username', 'email', 'last_login', 'image', 'description', 'modify']
-

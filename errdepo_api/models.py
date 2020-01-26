@@ -10,7 +10,7 @@ class Card(models.Model):
     name = models.CharField(max_length=50, blank=False)
     position = models.SmallIntegerField()
     color = models.CharField(max_length=7, blank=True, default='#FFFFFF')
-    owner = models.ForeignKey('auth.User', related_name='todo_lists_api', on_delete=models.CASCADE)
+    owner = models.ForeignKey('auth.User', related_name='errdepo_api', on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['position', 'created']

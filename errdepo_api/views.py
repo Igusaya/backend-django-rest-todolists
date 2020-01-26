@@ -1,7 +1,6 @@
-from todo_lists_api.models import Card, Profile
-from todo_lists_api.serializers import CardSerializer, UserSerializer, ProfileSerializer
-
-from todo_lists_api.permissions import IsOwnerOrReadOnly, IsOwner
+from errdepo_api.models import Card, Profile
+from errdepo_api.serializers import CardSerializer, UserSerializer, ProfileSerializer 
+from errdepo_api.permissions import IsOwnerOrReadOnly, IsOwner
 
 from django.http import Http404
 from django.contrib.auth.models import User
@@ -10,12 +9,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions, generics
 
-import os
 import base64
 import numpy as np
 import cv2
-from django.conf import settings
-from django.core.files import File
+from pygments.lexers import get_all_lexers
+
+LEXERS = [item for item in get_all_lexers() if item[1]]
+LANGUAGE_CHOICES = sorted([(item[0]) for item in LEXERS])
 
 
 class CardList(APIView):
@@ -125,3 +125,11 @@ class ProfileDetail(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class Lang(APIView):
+    """
+    言語の配列を返す
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self,request, format=None):
+        return Response({'langArray':LANGUAGE_CHOICES})
