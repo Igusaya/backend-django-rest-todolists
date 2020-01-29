@@ -9,7 +9,9 @@ urlpatterns = [
         path('users/', views.UserList.as_view()),
         path('users/<int:pk>/', views.UserDetail.as_view()),
         path('profile/', views.ProfileDetail.as_view()),
-        path('lang/', views.Lang.as_view())
+        path('lang/', views.Lang.as_view()),
+        path('confirmreport/', views.ConfirmReport.as_view()),
+        path('report/', views.ReportList.as_view()),
 ]
 
 urlpatterns += [

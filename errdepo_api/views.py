@@ -1,6 +1,7 @@
-from errdepo_api.models import Card, Profile
-from errdepo_api.serializers import CardSerializer, UserSerializer, ProfileSerializer 
+from errdepo_api.models import Card, Profile, Fw, Report
+from errdepo_api.serializers import CardSerializer, UserSerializer, ProfileSerializer, FwSerializer, ReportSerializer
 from errdepo_api.permissions import IsOwnerOrReadOnly, IsOwner
+from errdepo_api.util import toMD
 
 from django.http import Http404
 from django.contrib.auth.models import User
@@ -13,6 +14,12 @@ import base64
 import numpy as np
 import cv2
 from pygments.lexers import get_all_lexers
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters.html import HtmlFormatter
+from pygments import highlight
+
+import markdown
+import re
 
 LEXERS = [item for item in get_all_lexers() if item[1]]
 LANGUAGE_CHOICES = sorted([(item[0]) for item in LEXERS])
@@ -133,3 +140,60 @@ class Lang(APIView):
 
     def get(self,request, format=None):
         return Response({'langArray':LANGUAGE_CHOICES})
+
+class ConfirmReport(APIView):
+    """
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self,request, format=None):
+        # getパラメーターの取り出し
+        description = request.data['description']
+        correspondence = request.data['correspondence']
+        lang = request.data['lang']
+        
+        return Response({'description':toMD(description, lang), 'correspondence':toMD(correspondence, lang)})
+
+
+class ReportList(APIView):
+    """
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, format=None):
+        print('####### ReportList get #######')
+        report = Report.objects.all()
+        print('--- report ----\n',report)
+        serializer = ReportSerializer(report, many=True)
+        print('--- serializer ----\n',serializer)
+        print('--- serializer.data ----\n',serializer.data)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        print('\n###### ReportList post ######')
+        print('\n--- request ----\n',vars(request))
+        print('\n--- request.data ----\n',request.data)
+
+        fw_count = Fw.objects.filter(lang=request.data['lang'], fw=request.data['fw']).count()
+        print('\n--- fw_count ----\n',fw_count)
+        if fw_count == 0 and request.data['fw'] != '' :
+            print('\n--- if fw_count == 0 ----\ntrue')
+            fw_serializer = FwSerializer(data={'lang':request.data['lang'],'fw':request.data['fw']})
+            print('\n--- fw_serializer ----\n',fw_serializer)
+            if fw_serializer.is_valid():
+                print('\n--- if fw_serializer.is_valid ----\ntrue')
+                fw_serializer.save()
+            else:
+                print('\n--- if fw_serializer.is_valid ----\nfalse')
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = ReportSerializer(data=request.data)
+        print('--- serializer ----\n',serializer)
+        if serializer.is_valid():
+            print('--- is_valid ----\ntrue')
+            print('--- self.request.user ----\n', self.request.user)
+            serializer.save(owner=self.request.user)
+            print('--- serializer.data ----\n',serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print('--- is_valid ----\nfalse')
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
