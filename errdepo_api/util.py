@@ -15,7 +15,7 @@ def toMD(text, lang='typescript'):
     # ```で括られた部分を取得
     arr_code_notation = re.findall('(```\n(.|\s)*?\n```)', text)
 
-    # 行頭に空白4文字挿入
+    # 行頭に空白4文字挿入 & ```削除したlist作成
     code_list = []
     replace_code_list = []
     for code in arr_code_notation:
@@ -31,7 +31,7 @@ def toMD(text, lang='typescript'):
         text = text.replace(code_list[i], replace_code_list[i])
         i += 1
 
-    # MarcDown化
+    # MarkDown化
     md = markdown.Markdown()
     md_text = md.convert(text)
 
