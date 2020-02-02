@@ -12,6 +12,7 @@ urlpatterns = [
         path('lang/', views.Lang.as_view()),
         path('confirmreport/', views.ConfirmReport.as_view()),
         path('report/', views.ReportList.as_view()),
+        path('report/<int:pk>/', views.ReportDetail.as_view()),
 ]
 
 urlpatterns += [

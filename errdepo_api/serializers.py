@@ -39,4 +39,8 @@ class ReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Report
-        fields =['id', 'created', 'modify', 'lang', 'fw', 'env', 'errmsg', 'description', 'correspondence', 'owner_id','owner']
+        fields =['id', 'created', 'modify', 'lang', 'fw', 'env', 'errmsg', 'description'
+            , 'correspondence', 'descriptionHTML', 'correspondenceHTML', 'owner_id','owner']
+        # デフォルトだとtrimされるので'trim_whitespace'にfalseを設定
+        extra_kwargs = {'description': {'trim_whitespace': False},
+            'correspondence': {'trim_whitespace': False}}

@@ -49,15 +49,17 @@ class Report(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modify = models.DateTimeField(auto_now=True)
     lang = models.CharField(max_length=100)
-    fw = models.CharField(max_length=100)
-    env = models.TextField()
-    errmsg = models.TextField()
-    description = models.TextField()
-    correspondence = models.TextField()
+    fw = models.CharField(max_length=100, null=True)
+    env = models.TextField(null=True)
+    errmsg = models.TextField(null=True)
+    description = models.TextField(null=True)
+    descriptionHTML = models.TextField(null=True)
+    correspondence = models.TextField(null=True)
+    correspondenceHTML = models.TextField(null=True)
     owner = models.ForeignKey('auth.User', related_name='report_owner', on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['created']
+        ordering = ['-created']
 
     def save(self, *arg, **kwargs):
         super(Report, self).save(*arg, **kwargs)

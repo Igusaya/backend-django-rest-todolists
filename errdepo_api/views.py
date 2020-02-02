@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions, generics
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 
 import base64
 import numpy as np
@@ -155,45 +156,74 @@ class ConfirmReport(APIView):
         return Response({'description':toMD(description, lang), 'correspondence':toMD(correspondence, lang)})
 
 
-class ReportList(APIView):
+#class ReportList(APIView):
+class ReportList(generics.ListAPIView):
     """
+    全てのReportを取得、もしくは新しいReportを作成する。
+    Postは認証済ユーザのみ許可
     """
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = ReportSerializer
+    queryset = Report.objects.all()
 
+    """
     def get(self, request, format=None):
-        print('####### ReportList get #######')
+        print('####### ')
         report = Report.objects.all()
-        print('--- report ----\n',report)
         serializer = ReportSerializer(report, many=True)
-        print('--- serializer ----\n',serializer)
-        print('--- serializer.data ----\n',serializer.data)
         return Response(serializer.data)
+    """
 
     def post(self, request, format=None):
-        print('\n###### ReportList post ######')
-        print('\n--- request ----\n',vars(request))
-        print('\n--- request.data ----\n',request.data)
-
+        """
+        Post {baseURL}/report
+        fwTBLにrequest.fwが存在しない場合はinsertした後にreportTBLへinsertする
+        """
         fw_count = Fw.objects.filter(lang=request.data['lang'], fw=request.data['fw']).count()
-        print('\n--- fw_count ----\n',fw_count)
         if fw_count == 0 and request.data['fw'] != '' :
-            print('\n--- if fw_count == 0 ----\ntrue')
             fw_serializer = FwSerializer(data={'lang':request.data['lang'],'fw':request.data['fw']})
-            print('\n--- fw_serializer ----\n',fw_serializer)
             if fw_serializer.is_valid():
-                print('\n--- if fw_serializer.is_valid ----\ntrue')
                 fw_serializer.save()
             else:
-                print('\n--- if fw_serializer.is_valid ----\nfalse')
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = ReportSerializer(data=request.data)
-        print('--- serializer ----\n',serializer)
         if serializer.is_valid():
-            print('--- is_valid ----\ntrue')
-            print('--- self.request.user ----\n', self.request.user)
             serializer.save(owner=self.request.user)
-            print('--- serializer.data ----\n',serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print('--- is_valid ----\nfalse')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+class ReportDetail(APIView):
+    """
+    Reportインスタンスを取得、更新、削除する。
+    Get以外はownerのみ許可
+    """
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly]
+    def get_object(self, pk):
+        try:
+            return Report.objects.get(pk=pk)
+        except Report.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        report = self.get_object(pk)
+        serializer = ReportSerializer(report)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        report = self.get_object(pk)
+        serializer = ReportSerializer(report, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            , serializer.data['description'])
+            , serializer.data['correspondence'])
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk, formata=None):
+        report = self.get_object(pk)
+        report.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -12,7 +12,6 @@ for item in LEXERS:
 def toMD(text, lang='typescript'):
     """
     """
-    print(LANG_DICT['JavaScript+Django/Jinja'])
     # MarcDown化
     md = markdown.Markdown()
     md_text = md.convert(text)
@@ -27,7 +26,6 @@ def toMD(text, lang='typescript'):
 
     # code要素の置換 todo:複数行は今まで通り、単行は行番号非表示
     for code in arr_code:
-        print(code[0])
         if code[0] in arr_unit_code:
             unit_format_code = code[0].replace('<code>','<code style="background-color: #fdf6e3;color: #657b83;">')
             md_text = md_text.replace(code[0],unit_format_code)
