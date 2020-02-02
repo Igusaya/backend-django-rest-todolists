@@ -12,6 +12,25 @@ for item in LEXERS:
 def toMD(text, lang='typescript'):
     """
     """
+    # ```で括られた部分を取得
+    arr_code_notation = re.findall('(```\n(.|\s)*?\n```)', text)
+
+    # 行頭に空白4文字挿入
+    code_list = []
+    replace_code_list = []
+    for code in arr_code_notation:
+        code_list.append(code[0])
+
+        replace_code = code[0].replace('\n', '\n    ')
+        replace_code = replace_code.replace('```','')
+        replace_code_list.append(replace_code)
+
+    # ```で括られた部分を置換
+    i = 0
+    while i < len(code_list):
+        text = text.replace(code_list[i], replace_code_list[i])
+        i += 1
+
     # MarcDown化
     md = markdown.Markdown()
     md_text = md.convert(text)
@@ -33,6 +52,9 @@ def toMD(text, lang='typescript'):
             format_code = highlight(code[0][6:-7], lexer, formatter)
             md_text = md_text.replace(code[0],format_code)
     
+    # preタグの除去
+    md_text = md_text.replace('<pre>','')
+    md_text = md_text.replace('</pre>','')
     return md_text
 
     
