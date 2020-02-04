@@ -9,7 +9,7 @@ LANG_DICT = {}
 for item in LEXERS:
     LANG_DICT[item[0]]=item[1][0] 
 
-def toMD(text, lang='typescript'):
+def toMD(text, lang):
     """
     """
     # ```で括られた部分を取得
@@ -40,8 +40,11 @@ def toMD(text, lang='typescript'):
     arr_unit_code = re.findall('<code.*</code>', md_text)
     
     # コードフォーマッターの作成
+    if(lang not in LANG_DICT):
+        # 登録外の言語の場合、癖のなさそうなTwigを設定
+        lang = 'Twig'
     lexer = get_lexer_by_name(LANG_DICT[lang])
-    formatter = HtmlFormatter(style='solarized-light', linenos='table', full=False, noclasses=True)
+    formatter = HtmlFormatter(style='solarized-light', linenos='Table', full=False, noclasses=True)
 
     # code要素の置換 todo:複数行は今まで通り、単行は行番号非表示
     for code in arr_code:

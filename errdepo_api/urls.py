@@ -13,6 +13,7 @@ urlpatterns = [
         path('confirmreport/', views.ConfirmReport.as_view()),
         path('report/', views.ReportList.as_view()),
         path('report/<int:pk>/', views.ReportDetail.as_view()),
+        path('fw/', views.FwView.as_view()),
 ]
 
 urlpatterns += [

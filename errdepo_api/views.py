@@ -142,13 +142,27 @@ class Lang(APIView):
     def get(self,request, format=None):
         return Response({'langArray':LANGUAGE_CHOICES})
 
+class FwView(APIView):
+    """
+    本来getだが、パラメーターに禁則文字(javascript等)があるため、
+    postで取得処理を行う
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self,request, format=None):
+        lang = request.data['lang']
+        fw = Fw.objects.filter(lang=request.data['lang'])
+        serializer = FwSerializer(fw, many=True)
+        return Response(serializer.data)
+
+
 class ConfirmReport(APIView):
     """
     """
     permission_classes = [permissions.AllowAny]
 
     def post(self,request, format=None):
-        # getパラメーターの取り出し
+        # パラメーターの取り出し
         description = request.data['description']
         correspondence = request.data['correspondence']
         lang = request.data['lang']
