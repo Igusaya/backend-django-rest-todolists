@@ -52,7 +52,9 @@ def toMD(text, lang):
             unit_format_code = code[0].replace('<code>','<code style="background-color: #fdf6e3;color: #657b83;">')
             md_text = md_text.replace(code[0],unit_format_code)
         else :
-            format_code = highlight(code[0][6:-7], lexer, formatter)
+            format_code = '<div style="overflow: auto;">' + highlight(code[0][6:-7], lexer, formatter) + '</div>'
+            print('\n--- format_code ---\n',format_code)
+            # <div style="overflow: auto;"></div>
             md_text = md_text.replace(code[0],format_code)
     
     # preタグの除去
