@@ -14,6 +14,8 @@ urlpatterns = [
         path('report/', views.ReportList.as_view()),
         path('report/<int:pk>/', views.ReportDetail.as_view()),
         path('fw/', views.FwView.as_view()),
+        path('exists_values/', views.ExistsValue.as_view()),
+        path('search_reports/', views.SearchReports.as_view()),
 ]
 
 urlpatterns += [

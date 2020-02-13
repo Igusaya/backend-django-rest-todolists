@@ -5,6 +5,7 @@ from errdepo_api.util import toMD
 
 from django.http import Http404
 from django.contrib.auth.models import User
+from django.db.models import Count, Q
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -180,14 +181,6 @@ class ReportList(generics.ListAPIView):
     serializer_class = ReportSerializer
     queryset = Report.objects.all()
 
-    """
-    def get(self, request, format=None):
-        print('####### ')
-        report = Report.objects.all()
-        serializer = ReportSerializer(report, many=True)
-        return Response(serializer.data)
-    """
-
     def post(self, request, format=None):
         """
         Post {baseURL}/report
@@ -239,3 +232,60 @@ class ReportDetail(APIView):
         report = self.get_object(pk)
         report.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ExistsValue(APIView):
+    """
+    検索の為に登録されている作成者とlangを取得
+    getのみ
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, format=None):
+        query = Report.objects.values('lang','owner','owner_id')
+        #　配列化
+        l_lang = [d.get('lang') for d in query]
+        l_owner = [d.get('owner') for d in query]
+        # 重複削除
+        l_lang = list(set(l_lang))
+        l_owner = list(set(l_owner))
+        # owner名取得
+        q_user = User.objects.filter(id__in=l_owner)
+        l_creater = [o.username for o in q_user]
+        return Response({'langList':l_lang, 'createrList':l_creater})
+
+class SearchReports(APIView):
+    """
+    reportの検索を行う
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, format=None):
+        l_word = request.data['inputWord']
+        l_lang = request.data['inputLang']
+        l_fw = request.data['inputFw']
+        l_creater = request.data['inputCreater']
+        if len(l_creater) > 0:
+            l_user_id = []
+            for creater in l_creater:
+                l_user_id.append(User.objects.filter(username=creater)[0].id)
+
+        report = Report.objects
+        # Option(creater, fw, lang) search
+        if len(l_creater) > 0:
+            report = report.filter(owner_id__in=l_user_id)
+        if len(l_fw) > 0:
+            report = report.filter(fw__in=l_fw)
+        if len(l_lang) > 0:
+            report = report.filter(lang__in=l_lang)
+
+        # word like search
+        for word in l_word:
+            report = report.filter(
+                Q(errmsg__icontains=word) |
+                Q(description__icontains=word) |
+                Q(correspondence__icontains=word))
+
+        serializer = ReportSerializer(report, many=True)
+        return Response({'count':report.count(), 'next':'2', 'previous':'', 'results':serializer.data})
+    
