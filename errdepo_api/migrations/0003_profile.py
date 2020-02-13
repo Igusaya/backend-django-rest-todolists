@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('todo_lists_api', '0002_auto_20200115_1711'),
+        ('errdepo_api', '0002_auto_20200115_1711'),
     ]
 
     operations = [

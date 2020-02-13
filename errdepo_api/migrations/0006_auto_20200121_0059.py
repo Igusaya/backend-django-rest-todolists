@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('todo_lists_api', '0005_auto_20200121_0029'),
+        ('errdepo_api', '0005_auto_20200121_0029'),
     ]
 
     operations = [

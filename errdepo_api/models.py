@@ -10,7 +10,7 @@ class Card(models.Model):
     name = models.CharField(max_length=50, blank=False)
     position = models.SmallIntegerField()
     color = models.CharField(max_length=7, blank=True, default='#FFFFFF')
-    owner = models.ForeignKey('auth.User', related_name='todo_lists_api', on_delete=models.CASCADE)
+    owner = models.ForeignKey('auth.User', related_name='errdepo_api', on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['position', 'created']
@@ -24,7 +24,6 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     description = models.CharField(max_length=255, blank=True)
     modify = models.DateTimeField(auto_now=True)
-    #image = models.ImageField(upload_to='profIcon/', default='profIcon/defo.png')
     image = models.CharField(max_length=100, default='/image/profIcon/defo.png')
 
     @receiver(post_save, sender=User)
@@ -35,6 +34,35 @@ class Profile(models.Model):
     @receiver(post_save, sender=User)
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
+
+
+class Fw(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    lang = models.CharField(max_length=100)
+    fw = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ['created']
+
+
+class Report(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    modify = models.DateTimeField(auto_now=True)
+    lang = models.CharField(max_length=100)
+    fw = models.CharField(max_length=100, null=True, blank=True)
+    env = models.TextField(null=True, blank=True)
+    errmsg = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    descriptionHTML = models.TextField(null=True, blank=True)
+    correspondence = models.TextField(null=True, blank=True)
+    correspondenceHTML = models.TextField(null=True, blank=True)
+    owner = models.ForeignKey('auth.User', related_name='report_owner', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-created']
+
+    def save(self, *arg, **kwargs):
+        super(Report, self).save(*arg, **kwargs)
 
 
 """

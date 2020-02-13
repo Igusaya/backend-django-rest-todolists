@@ -9,13 +9,13 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('todo_lists_api', '0001_initial'),
+        ('errdepo_api', '0001_initial'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='card',
             name='owner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='todo_lists_api', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='errdepo_api', to=settings.AUTH_USER_MODEL),
         ),
     ]
