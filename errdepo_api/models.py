@@ -24,7 +24,9 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     description = models.CharField(max_length=255, blank=True)
     modify = models.DateTimeField(auto_now=True)
-    image = models.CharField(max_length=100, default='/image/profIcon/defo.png')
+    # herokuを使用するため、画像ファイルをDB格納に修正
+    # image = models.CharField(max_length=100, default='/image/profIcon/defo.png')
+    image = models.TextField(null=True, blank=True)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
