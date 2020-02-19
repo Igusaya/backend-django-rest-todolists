@@ -107,6 +107,7 @@ class ProfileDetail(APIView):
         データURIスキーマを画像に変換し、保存を行う。
         対象の画像のパスはDB登録する
         """
+        """
         #data:image/png;base64,iVBOR
         data_uri_scheme = request.data['image']
         # 拡張子を取得
@@ -126,7 +127,7 @@ class ProfileDetail(APIView):
 
         # リクエストデータの書き換え
         request.data['image'] = '/image/profIcon/' + str(request.data['id']) + '.' + extension
-
+        """
         profile = Profile.objects.filter(user=self.request.user).first()
         serializer = ProfileSerializer(profile, data=request.data)
         if serializer.is_valid():
